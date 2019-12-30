@@ -1,4 +1,4 @@
-package fi.vtt.nubomedia.jsonrpcwsandroid;
+package fi.vtt.nubomedia.jsonrpcws_android;
 
 
 import android.util.Log;
@@ -8,15 +8,15 @@ import com.thetransactioncompany.jsonrpc2.JSONRPC2Notification;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
-
 import org.java_websocket.WebSocketFactory;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.client.WebSocketClient.WebSocketClientFactory;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
-
 import java.net.URI;
-
+import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcNotification;
+import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcRequest;
+import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcResponse;
 import fi.vtt.nubomedia.utilitiesandroid.LooperExecutor;
 
 public class JsonRpcWebSocketClient {

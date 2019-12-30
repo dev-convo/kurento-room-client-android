@@ -27,7 +27,7 @@ import java.util.HashMap;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcNotification;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcRequest;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcResponse;
-import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcWebSocketClient;
+import fi.vtt.nubomedia.jsonrpcws_android.JsonRpcWebSocketClient;
 import fi.vtt.nubomedia.utilitiesandroid.LooperExecutor;
 
 
