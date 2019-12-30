@@ -238,7 +238,7 @@ public class KurentoRoomAPI extends KurentoAPI {
 
         synchronized (listeners) {
             for (RoomListener rl : listeners) {
-                rl.onRoomDisconnected();
+                rl.onRoomDisconnected(code, reason, remote);
             }
         }
     }

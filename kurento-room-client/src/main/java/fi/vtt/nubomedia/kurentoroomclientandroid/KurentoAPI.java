@@ -18,6 +18,8 @@
 package fi.vtt.nubomedia.kurentoroomclientandroid;
 
 import android.util.Log;
+
+import org.java_websocket.client.DefaultWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient.WebSocketClientFactory;
 import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
@@ -67,6 +69,9 @@ public abstract class KurentoAPI implements JsonRpcWebSocketClient.WebSocketConn
             URI uri = new URI(wsUri);
             client = new JsonRpcWebSocketClient(uri, this,executor);
             if (webSocketClientFactory != null) {
+                client.setWebSocketFactory(webSocketClientFactory);
+            } else {
+                webSocketClientFactory = new DefaultWebSocketClientFactory(client.getWebSocketClient());
                 client.setWebSocketFactory(webSocketClientFactory);
             }
             executor.execute(new Runnable() {

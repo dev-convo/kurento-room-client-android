@@ -58,6 +58,9 @@ public interface RoomListener {
 
     /**
      * The connection to room is lost or disconnected.
+     * @param code
+     * @param reason
+     * @param remote
      */
-    public void onRoomDisconnected();
+    public void onRoomDisconnected(int code, String reason, boolean remote);
 }
