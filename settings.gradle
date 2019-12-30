@@ -1,1 +1,1 @@
-include ':kurento-room-client-android'
+include ':kurento-room-client'
