@@ -21,10 +21,23 @@ import android.util.Log;
 
 import net.minidev.json.JSONObject;
 
+import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Vector;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcNotification;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcResponse;
@@ -34,11 +47,13 @@ import fi.vtt.nubomedia.utilitiesandroid.LooperExecutor;
  * Class that handles all Room API calls and passes asynchronous
  * responses and notifications to a RoomListener interface.
  */
-public class KurentoRoomAPI extends KurentoAPI {
+public class KurentoSSLRoomAPI extends KurentoAPI {
 
     public enum Method {JOIN_ROOM, PUBLISH_VIDEO, UNPUBLISH_VIDEO, RECEIVE_VIDEO, STOP_RECEIVE_VIDEO}
 
     private static final String LOG_TAG = "KurentoRoomAPI";
+    private KeyStore keyStore;
+    private boolean usingSelfSigned = false;
     private Vector<RoomListener> listeners;
 
     /**
@@ -51,11 +66,19 @@ public class KurentoRoomAPI extends KurentoAPI {
      * @param uri is the web socket link to the room web services.
      * @param listener interface handles the callbacks for responses, notifications and errors.
      */
-    public KurentoRoomAPI(LooperExecutor executor, String uri, RoomListener listener){
+    public KurentoSSLRoomAPI(LooperExecutor executor, String uri, RoomListener listener){
         super(executor, uri);
 
         listeners = new Vector<>();
         listeners.add(listener);
+
+        // Create a KeyStore containing our trusted CAs
+        try {
+            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null, null);
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -205,6 +228,31 @@ public class KurentoRoomAPI extends KurentoAPI {
 
     }
 
+    /**
+     * This methods can be used to add a self-signed SSL certificate to be trusted when establishing
+     * connection.
+     * @param alias is a unique alias for the certificate
+     * @param cert is the certificate object
+     */
+    @SuppressWarnings("unused")
+    public void addTrustedCertificate(String alias, Certificate cert){
+        try {
+            keyStore.setCertificateEntry(alias, cert);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Switches on/off the self-signed certificate support.
+     *
+     * @see KurentoSSLRoomAPI#addTrustedCertificate(String, Certificate)
+     * @param use Boolean which indicates whether to use self-signed certificates
+     */
+    @SuppressWarnings("unused")
+    public void useSelfSignedCertificate(boolean use){
+        this.usingSelfSigned = use;
+    }
 
     /**
      * Opens a web socket connection to the predefined URI as provided in the constructor.
@@ -215,6 +263,29 @@ public class KurentoRoomAPI extends KurentoAPI {
     public void connectWebSocket() {
         if(isWebSocketConnected()){
             return;
+        }
+        // Switch to SSL web socket client factory if secure protocol detected
+        String scheme;
+        try {
+            scheme = new URI(wsUri).getScheme();
+            if (scheme.equals("https") || scheme.equals("wss")){
+
+                // Create an SSLContext that uses our or default TrustManager
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+
+                if (usingSelfSigned) {
+                    // Create a TrustManager that trusts the CAs in our KeyStore
+                    String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+                    TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+                    tmf.init(keyStore);
+                    sslContext.init(null, tmf.getTrustManagers(), null);
+                } else {
+                    sslContext.init(null, null, null);
+                }
+                webSocketClientFactory = new DefaultSSLWebSocketClientFactory(sslContext);
+            }
+        } catch (URISyntaxException|NoSuchAlgorithmException|KeyStoreException|KeyManagementException e) {
+            e.printStackTrace();
         }
         super.connectWebSocket();
     }
