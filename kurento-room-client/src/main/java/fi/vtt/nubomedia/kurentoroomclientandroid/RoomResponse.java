@@ -17,12 +17,9 @@
 
 package fi.vtt.nubomedia.kurentoroomclientandroid;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +38,7 @@ public class RoomResponse {
     private String sdpAnswer = null;
     private Method method;
 
-    public RoomResponse(String id, JSONObject obj) throws JSONException {
+    public RoomResponse(String id, JSONObject obj){
         this.id = Integer.valueOf(id);
         this.sessionId = this.getJSONObjectSessionId(obj);
         this.values = this.getJSONObjectValues(obj);
@@ -90,20 +87,20 @@ public class RoomResponse {
         return "RoomResponse: "+id+" - "+sessionId+" - "+valuesToString();
     }
 
-    private String getJSONObjectSessionId(JSONObject obj) throws JSONException {
-        if(obj.has("sessionId")) {
+    private String getJSONObjectSessionId(JSONObject obj){
+        if(obj.containsKey("sessionId")) {
             return obj.get("sessionId").toString();
         } else {
             return null;
         }
     }
 
-    private List<HashMap<String, String>> getJSONObjectValues(JSONObject obj) throws JSONException {
+    private List<HashMap<String, String>> getJSONObjectValues(JSONObject obj){
         List<HashMap<String, String>> result = new Vector<>();
 
         // Try to find value field. Value is specific to room join response
         // and contains a list of all existing users
-        if(obj.has("value")) {
+        if(obj.containsKey("value")) {
             JSONArray valueArray = (JSONArray)obj.get("value");
             method = Method.JOIN_ROOM;
             users = new HashMap<>();
@@ -112,30 +109,30 @@ public class RoomResponse {
             // where "id" is the username and "streams" a list of dictionary.
             // Each stream dictionary contains "id" key and the type of the
             // stream as the value, which is currently aways "webcam"
-            for(int i=0; i<valueArray.length(); i++) {
+            for(int i=0; i<valueArray.size(); i++) {
                 HashMap<String, String> vArrayElement = new HashMap<>();
                 JSONObject jo = (JSONObject) valueArray.get(i);
-                Iterator<String> keysIT = jo.keys();
-                while (keysIT.hasNext()){
-                    String key = keysIT.next();
+                Set<String> keys = jo.keySet();
+                for(String key : keys){
                     vArrayElement.put(key, jo.get(key).toString());
+
                 }
                 result.add(vArrayElement);
 
                 // Fill in the users dictionary
-                if (jo.has("id")) {
+                if (jo.containsKey("id")) {
                     String username = jo.get("id").toString();
                     Boolean webcamPublished;
                     // If the array entry contains both id and streams then from the
                     // current implementation we already know that the webcam stream has
                     // been published
-                    webcamPublished = jo.has("streams");
+                    webcamPublished = jo.containsKey("streams");
                     users.put(username, webcamPublished);
                 }
             }
         }
 
-        if (obj.has("sdpAnswer")){
+        if (obj.containsKey("sdpAnswer")){
             sdpAnswer = (String)obj.get("sdpAnswer");
             HashMap<String, String> vArrayElement = new HashMap<>();
 

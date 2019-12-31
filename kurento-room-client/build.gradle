@@ -11,7 +11,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 14
-        versionName "1.14"
+        versionName "1.14.1"
     }
     buildTypes {
         release {
@@ -26,6 +26,7 @@ dependencies {
     implementation 'com.github.dev-convo:jsonrpc-ws-android:1.0.7'
     implementation('fi.vtt.nubomedia:utilities-android:1.0.2@aar')
     implementation('org.java-websocket:Java-WebSocket:1.4.0')
+    implementation('com.thetransactioncompany:jsonrpc2-base:1.38.1')
 }
 
 def siteUrl = 'https://github.com/nubomedia-vtt/kurento-room-client-android'      // Homepage URL of the library
