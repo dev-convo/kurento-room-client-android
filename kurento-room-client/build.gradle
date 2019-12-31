@@ -8,7 +8,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 9
         versionName "1.12"
@@ -23,7 +23,9 @@ android {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    implementation('fi.vtt.nubomedia:jsonrpc-ws-android:1.0.6@aar') { transitive=true }
+    implementation 'com.github.dev-convo:jsonrpc-ws-android:1.0.7'
+    implementation('fi.vtt.nubomedia:utilities-android:1.0.2@aar')
+    implementation('org.java-websocket:Java-WebSocket:1.4.0')
 }
 
 def siteUrl = 'https://github.com/nubomedia-vtt/kurento-room-client-android'      // Homepage URL of the library

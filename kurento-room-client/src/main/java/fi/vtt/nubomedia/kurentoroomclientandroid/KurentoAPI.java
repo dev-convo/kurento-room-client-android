@@ -19,15 +19,17 @@ package fi.vtt.nubomedia.kurentoroomclientandroid;
 
 import android.util.Log;
 
-import org.java_websocket.client.DefaultWebSocketClientFactory;
-import org.java_websocket.client.WebSocketClient.WebSocketClientFactory;
 import org.java_websocket.handshake.ServerHandshake;
+
 import java.net.URI;
 import java.util.HashMap;
+
+import javax.net.SocketFactory;
+
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcNotification;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcRequest;
 import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcResponse;
-import fi.vtt.nubomedia.jsonrpcws_android.JsonRpcWebSocketClient;
+import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcWebSocketClient;
 import fi.vtt.nubomedia.utilitiesandroid.LooperExecutor;
 
 
@@ -40,7 +42,7 @@ public abstract class KurentoAPI implements JsonRpcWebSocketClient.WebSocketConn
     protected JsonRpcWebSocketClient client = null;
     protected LooperExecutor executor = null;
     protected String wsUri = null;
-    protected WebSocketClientFactory webSocketClientFactory = null;
+    protected SocketFactory socketClientFactory = null;
 
     /**
      * Constructor that initializes required instances and parameters for the API calls.
@@ -68,11 +70,11 @@ public abstract class KurentoAPI implements JsonRpcWebSocketClient.WebSocketConn
             }
             URI uri = new URI(wsUri);
             client = new JsonRpcWebSocketClient(uri, this,executor);
-            if (webSocketClientFactory != null) {
-                client.setWebSocketFactory(webSocketClientFactory);
+            if (socketClientFactory != null) {
+                client.setWebSocketFactory(socketClientFactory);
             } else {
-                webSocketClientFactory = new DefaultWebSocketClientFactory(client.getWebSocketClient());
-                client.setWebSocketFactory(webSocketClientFactory);
+                socketClientFactory = SocketFactory.getDefault();
+                client.setWebSocketFactory(socketClientFactory);
             }
             executor.execute(new Runnable() {
                 public void run() {

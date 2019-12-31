@@ -17,12 +17,12 @@
 
 package fi.vtt.nubomedia.kurentoroomclientandroid;
 
+import android.net.SSLCertificateSocketFactory;
 import android.util.Log;
 
-import net.minidev.json.JSONObject;
-
-import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -282,7 +282,7 @@ public class KurentoSSLRoomAPI extends KurentoAPI {
                 } else {
                     sslContext.init(null, null, null);
                 }
-                webSocketClientFactory = new DefaultSSLWebSocketClientFactory(sslContext);
+                socketClientFactory = SSLCertificateSocketFactory.getDefault();
             }
         } catch (URISyntaxException|NoSuchAlgorithmException|KeyStoreException|KeyManagementException e) {
             e.printStackTrace();
@@ -321,7 +321,12 @@ public class KurentoSSLRoomAPI extends KurentoAPI {
     public void onResponse(JsonRpcResponse response) {
         if(response.isSuccessful()){
             JSONObject jsonObject = (JSONObject)response.getResult();
-            RoomResponse roomResponse = new RoomResponse(response.getId().toString(), jsonObject);
+            RoomResponse roomResponse = null;
+            try {
+                roomResponse = new RoomResponse(response.getId().toString(), jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             synchronized (listeners) {
                 for (RoomListener rl : listeners) {
