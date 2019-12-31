@@ -19,9 +19,10 @@ package fi.vtt.nubomedia.kurentoroomclientandroid;
 
 import android.util.Log;
 
+import net.minidev.json.JSONObject;
+
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -251,11 +252,7 @@ public class KurentoRoomAPI extends KurentoAPI {
         if(response.isSuccessful()){
             JSONObject jsonObject = (JSONObject)response.getResult();
             RoomResponse roomResponse = null;
-            try {
-                roomResponse = new RoomResponse(response.getId().toString(), jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            roomResponse = new RoomResponse(response.getId().toString(), jsonObject);
 
             synchronized (listeners) {
                 for (RoomListener rl : listeners) {
