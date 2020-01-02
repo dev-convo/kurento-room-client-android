@@ -22,7 +22,6 @@ import android.util.Log;
 import net.minidev.json.JSONObject;
 
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -264,7 +263,7 @@ public class KurentoRoomAPI extends KurentoAPI {
 
             synchronized (listeners) {
                 for (RoomListener rl : listeners) {
-                    rl.onRoomError(roomError);
+                    rl.onRoomError(roomError, response);
                 }
             }
         }

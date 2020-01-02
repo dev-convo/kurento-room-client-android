@@ -334,7 +334,7 @@ public class KurentoSSLRoomAPI extends KurentoAPI {
 
             synchronized (listeners) {
                 for (RoomListener rl : listeners) {
-                    rl.onRoomError(roomError);
+                    rl.onRoomError(roomError, response);
                 }
             }
         }

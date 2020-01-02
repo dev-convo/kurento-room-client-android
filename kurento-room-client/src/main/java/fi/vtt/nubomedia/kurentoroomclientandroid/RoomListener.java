@@ -17,6 +17,8 @@
 
 package fi.vtt.nubomedia.kurentoroomclientandroid;
 
+import fi.vtt.nubomedia.jsonrpcwsandroid.JsonRpcResponse;
+
 /**
  * Interface class defining the KurentoRoomAPI room events
  */
@@ -42,8 +44,9 @@ public interface RoomListener {
     /**
      * The room has encountered an error
      * @param error The error object
+     * @param response
      */
-    public void onRoomError(RoomError error);
+    public void onRoomError(RoomError error, JsonRpcResponse response);
 
     /**
      * The room has sent a notification
