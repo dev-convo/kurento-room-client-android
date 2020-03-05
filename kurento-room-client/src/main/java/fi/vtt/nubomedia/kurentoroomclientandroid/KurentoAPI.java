@@ -124,7 +124,7 @@ public abstract class KurentoAPI implements JsonRpcWebSocketClient.WebSocketConn
      * @param namedParameters
      * @param id
      */
-    protected void send(String method, HashMap<String, Object> namedParameters, int id){
+    public void send(String method, HashMap<String, Object> namedParameters, int id){
 
         try {
             final JsonRpcRequest request = new JsonRpcRequest();
